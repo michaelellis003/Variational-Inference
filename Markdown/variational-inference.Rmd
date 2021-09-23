@@ -1,0 +1,43 @@
+---
+title: "Variational Inference  Univariate Normal"
+output: pdf_document
+---
+
+## Univariate Normal Model
+
+\begin{align*}
+y_i &\sim N(\mu, \sigma^2) \\
+\mu &\sim N(\mu_0, \sigma_0^2) \\
+\sigma^2 &\sim \text{inv-gamma}(\alpha_0, \beta_0)
+\end{align*}
+The posterior distribution we are interested in is given by
+\begin{align*}
+p(\mu, \sigma^2 | y_{1:N}) \propto \prod_{i=1}^N p(y_i | \mu, \sigma^2)p(\mu)p(\sigma^2).
+\end{align*}
+
+## Mean-Field Variational Family
+Assume the family of approximate densities to $p(\mu, \sigma^2)$ has the form,
+\begin{align*}
+    q(\mu, \sigma^2) = q_{\mu}(\mu) q_{\sigma^2}(\sigma^2)
+\end{align*}
+Then the optimal densities are
+\begin{align*}
+q^*_{\mu}(\mu) \propto \text{exp} \Big{\{} E_{\sigma^2} \log \prod_{i=1}^N p(y_i | \mu, \sigma^2)p(\mu) \Big{\}}.
+\end{align*}
+Which is,
+\begin{align*}
+q^*_{\mu}(\mu) &\sim N(\mu_{q_{\mu}(\mu)}, \text{Var}_{\mu}(\mu)) \\
+\text{Var}_{q_{\mu}(\mu)} &= \frac{N}{E_{\sigma^2}(\sigma^2)} + \frac{1}{\sigma^2_{0}} \\
+\mu_{q_{\mu}(\mu)} &= \text{Var}_{\mu}(\mu) \Big{(} \frac{\sum y_i}{E_{\sigma^2}(\sigma^2)} + \frac{\mu_0}{\sigma_{0}^2}\Big{)}.
+\end{align*}
+And
+\begin{align*}
+q^*_{\sigma^2}(\sigma^2) \propto \text{exp} \Big{\{} E_{\mu} \log \prod_{i=1}^N p(y_i | \mu, \sigma^2)p(\sigma^2) \Big{\}}.
+\end{align*}
+Which is,
+\begin{align*}
+q^*_{\sigma^2}(\sigma^2) &\sim \text{inv-gamma}\Big{(} A_{q(\sigma^2)}, B_{q(\sigma^2)} \Big{)} \\
+A_{q(\sigma^2)} &= \alpha_0 + \frac{N}{2} \\
+B_{q(\sigma^2)} &= \beta_0 + \frac{1}{2} \sum_{i=1}^N E_{\mu}(y_i - \mu)^2
+= \beta_0 + \frac{1}{2} \big{(} \sum_{i=1}^N (y_i - E_{\mu}(\mu))^2 - N\text{Var}_{q(\mu)}(\mu) \big{)}
+\end{align*}
